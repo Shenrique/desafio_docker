@@ -1,0 +1,35 @@
+version: '3.8'
+
+volumes:
+  postgres_volume:
+
+networks:
+  postgresdb_network:
+    driver: bridge
+
+services:
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - 5050:80
+    networks:
+      - postgresdb_network
+    environment:
+      PGADMIN_DEFAULT_EMAIL: teste@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: 12345
+    depends_on:
+      - postgresdb
+
+  postgresdb:
+    image: postgres:latest
+    restart: always
+    networks:
+      - postgresdb_network
+    volumes:
+      - postgres_volume:/data/db
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER : postgres
+      POSTGRES_PASSWORD: s12345

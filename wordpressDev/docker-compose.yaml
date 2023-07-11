@@ -1,0 +1,40 @@
+version: '3.8'
+
+volumes:
+  word_vol:
+
+networks:
+  worddb_network:
+    driver: bridge
+
+services:
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    ports:
+      - 80:80
+    networks:
+      - worddb_network
+    environment:
+      WORDPRESS_DB_HOST: mysqldb
+      WORDPRESS_DB_NAME: wordpressdb
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: 123456
+    depends_on:
+      - mysqldb
+
+  mysqldb:
+    image: mysql:latest
+    command: mysqld --default_authentication_plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: wordpressdb
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 12345
+      MYSQL_ROOT_PASSWORD: 123456
+    networks:
+      - worddb_network
+    ports:
+      - 3308:3306
+    volumes:
+      - word_vol:/data/db

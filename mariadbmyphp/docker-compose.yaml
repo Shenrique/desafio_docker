@@ -1,0 +1,33 @@
+version: '3.8'
+
+volumes:
+  mariadb_volume:
+
+networks:
+  mariadb_network:
+    driver: bridge
+
+services:
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    networks:
+      - mariadb_network
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    networks:
+      - mariadb_network
+    volumes:
+      - mariadb_volume:/data/db
+    environment:
+      MARIADB_USER : user
+      MARIADB_PASSWORD : s12345
+      MARIADB_ROOT_PASSWORD: ss12345

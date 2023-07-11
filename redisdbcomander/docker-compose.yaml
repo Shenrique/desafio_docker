@@ -1,0 +1,33 @@
+version: '3.8'
+
+volumes:
+  redis_volume:
+
+networks:
+  redisdb_network:
+    driver: bridge
+
+services:
+  rediscommander:
+    image: rediscommander/redis-commander:latest
+    restart: always
+    ports:
+      - 8081:8081
+    networks:
+      - redisdb_network
+    environment:
+      - REDIS_HOSTS=local:redisdb:6379
+      - HTTP_USER=root
+      - HTTP_PASSWORD=123456
+    depends_on:
+      - redisdb
+
+  redisdb:
+    image: redis:6.0.20
+    restart: always
+    networks:
+      - redisdb_network
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_volume:/data/db
